@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-var commandList = [];
+var command = {};
 const SESSION_FILE_PATH = "./session.json";
 let sessionCfg;
 if (fs.existsSync(SESSION_FILE_PATH)) {
@@ -46,8 +46,16 @@ const client = new Client({
 
 client.on("message", async (msg) => {
   console.log("MESSAGE RECEIVED", msg);
-  const command = commandList.find((element) => element.command == msg.body);
-  if (command) client.sendMessage(msg.from, command.reply);
+  const validCommand = command.commands.find(
+    (element) => element.command == msg.body
+  );
+
+  if (validCommand) {
+    console.log(command.reply);
+    client.sendMessage(msg.from, validCommand.reply);
+  } else if (msg.body == "start" && command) {
+    client.sendMessage(msg.from, command.startingMessage);
+  }
 });
 
 client.initialize();
@@ -63,7 +71,7 @@ io.on("connection", (socket) => {
     });
   });
 
-  client.on("ready", () => {
+  client.on("ready", async () => {
     socket.emit("message", "The WhatsApp bot is ready");
   });
 
@@ -92,7 +100,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// Send message
+// Send message (unused)
 app.post("/send-message", (req, res) => {
   const number = req.body.number;
   const message = req.body.message;
@@ -115,8 +123,10 @@ app.post("/send-message", (req, res) => {
 
 app.post("/post-commands", (req, res) => {
   console.log(req.body);
-  commandList = req.body;
-  console.log(commandList);
+  // commandList = req.body;
+  command = req.body;
+  console.log(command.commands);
+  // console.log(commandList);
   res.status(200).json({
     status: true,
   });
