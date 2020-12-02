@@ -6,6 +6,7 @@ const http = require("http");
 const cors = require("cors");
 const { Client } = require("whatsapp-web.js");
 
+const port = process.env.PORT || 8000;
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -98,6 +99,6 @@ app.post("/post-commands", (req, res) => {
   });
 });
 
-server.listen(8000, () => {
-  console.log("App running on port:" + 8000);
+server.listen(port, () => {
+  console.log("App running on port:" + port);
 });
