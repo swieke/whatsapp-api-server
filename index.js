@@ -31,18 +31,21 @@ app.get("/", (req, res) => {
 });
 
 const client = new Client({
-  puppeteer: { headless: true },
+  restartOnAuthFail: true,
+  puppeteer: {
+    headless: true,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--no-first-run",
+      "--no-zygote",
+      "--single-process", // <- this one doesn't works in Windows
+      "--disable-gpu",
+    ],
+  },
   session: sessionCfg,
-});
-
-client.on("authenticated", (session) => {
-  console.log("AUTHENTICATED", session);
-  sessionCfg = session;
-  fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function (err) {
-    if (err) {
-      console.error(err);
-    }
-  });
 });
 
 client.on("message", async (msg) => {
@@ -66,6 +69,30 @@ io.on("connection", (socket) => {
 
   client.on("ready", () => {
     socket.emit("message", "The WhatsApp bot is ready");
+  });
+
+  client.on("authenticated", (session) => {
+    console.log("AUTHENTICATED", session);
+    sessionCfg = session;
+    fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function (err) {
+      if (err) {
+        console.error(err);
+      }
+    });
+  });
+
+  client.on("auth_failure", function (session) {
+    socket.emit("message", "Authentication failure, restarting...");
+  });
+
+  client.on("disconnected", (reason) => {
+    socket.emit("message", "Whatsapp is disconnected!");
+    fs.unlinkSync(SESSION_FILE_PATH, function (err) {
+      if (err) return console.log(err);
+      console.log("Session file deleted!");
+    });
+    client.destroy();
+    client.initialize();
   });
 });
 
