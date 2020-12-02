@@ -15,11 +15,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-var commandList = [
-  { command: "1", reply: "One" },
-  { command: "2", reply: "Two" },
-  { command: "3", reply: "Three" },
-];
+var commandList = [];
 const SESSION_FILE_PATH = "./session.json";
 let sessionCfg;
 if (fs.existsSync(SESSION_FILE_PATH)) {
