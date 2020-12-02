@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WhatsApp API</title>
+    </head>
+    <body>
+        <div id="whatsapp-api">
+            <h1>WhatsApp API</h1>
+            <img src="" alt="QR Code" id="qrcode">
+            <h3> Log: </h3>
+            <ul class="logs"></ul>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js" integrity="sha512-Jr0UIR/Q8MUX+93zjDOhuDUKLqJZObtwpkLJQcR9qMaLgL0thet39IORuavUaZFkZ8a4ktrUsKPM9mf5LWMduA==" crossorigin="anonymous"></script>
+        <script>
+            $(document).ready(() => {
+                var socket = io.connect('http://localhost:8000', {path: '/socket.io'});
+
+                socket.on('message', (msg) => {
+                    console.log(msg);
+                    $('.logs').append($('<li>').text(msg));
+                })
+                socket.on('qr', (src) => {
+                    $('#qrcode').attr('src', src);
+                })
+            });
+        </script>
+    </body>
+</html>

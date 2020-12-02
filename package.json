@@ -1,0 +1,26 @@
+{
+  "name": "whatsapp-api",
+  "version": "1.0.0",
+  "description": "an API for WhatsApp",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "whatsapp-api",
+    "node.js"
+  ],
+  "author": "Theo Azriel",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "http": "0.0.1-security",
+    "nodemon": "^2.0.6",
+    "qrcode": "^1.4.4",
+    "qrcode-terminal": "^0.12.0",
+    "socket.io": "^3.0.3",
+    "whatsapp-web.js": "^1.11.1"
+  }
+}
